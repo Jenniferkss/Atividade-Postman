@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 // Importar Lista de Array
 import dados from "./src/data/dados.js";
-const { bruxos,varinhas,pocoes } = dados;
+const { bruxos,varinhas,pocoes,animais } = dados;
 
 // Criar aplicação com Express e configurar para aceitar JSON
 const app = express();
@@ -61,26 +61,36 @@ let nucleo = ["Pena de Fênix","Fibra de Coração de Dragão","Pelo de Unicórn
  })
  })
 
- app.get ("/pocoes", (req,res) => {
-    const {nome} = req.query;
-    let pocaoNome = pocoes; 
-    if (pocoes) {
-        pocoes = nome.filter((p) => p.nome.toLowerCase().includes(nome.toLowerCase()));
+ app.get(`/pocoes`, (req,res) => {
+    const {nome, efeito} = req.query;
+    let resultado = pocoes; 
+    if (nome) {
+        resultado = resultado.filter(p => p.nome.toLowerCase().includes(nome.toLowerCase()));
+}
+    if (efeito) {
+        resultado = resultado.filter(p => p.efeito.toLowerCase().includes(efeito.toLowerCase()));
 }
     res.status(200).json({
-        total: pocaoNome.length,
-        data: pocaoNome,
+        total: resultado.length,
+        data: resultado,
+});
+ }); 
+ app.get(`/animais`, (req,res) => {
+    const {tipo, nome} = req.query;
+    let resultado = animais; 
+    if (nome) {
+        resultado = resultado.filter(a => a.nome.toLowerCase().includes(nome.toLowerCase()));
+}
+    if (tipo) {
+        resultado = resultado.filter(a => a.tipo.toLowerCase().includes(tipo.toLowerCase()));
+}
+    res.status(200).json({
+        total: resultado.length,
+        data: resultado,
 });
  }); 
 
 // Rota para criar Bruxo
-
-    // Acessando dados do body    
-    // Validação de campos obrigatórios  
-    // Criar novo bruxo
-    // Adicionar à lista de bruxos
-
-    // Adiciona response da API
 app.post("/bruxos",(req,res)=>{
     const {nome,casa,ano,varinha,mascote,patrono,especialidade,vivo} = req.body;
     if(!nome || !casa ) {
@@ -105,6 +115,28 @@ app.post("/bruxos",(req,res)=>{
         sucess: true,
         message: "Novo bruxo adicionado a Hogwarts!",
         data:novoBruxo
+
+    })
+})
+app.post("/varinhas",(req,res)=>{
+    const {material,nucleo,comprimento} = req.body;
+    if(!material || !nucleo || !comprimento ) {
+        return res.status(400).json({
+            sucess:false,
+            message: "Material,nucleo e comprimento são obrigatorios para uma varinha!",
+        })
+    }
+    const novaVarinha = {
+        id: varinhas.length + 1,
+        material,
+        nucleo,
+        comprimento,
+    }
+    varinhas.push(novaVarinha);
+    res.status(201).json({
+        sucess: true,
+        message: "Nova varinha adicionada!",
+        data:novaVarinha
 
     })
 })
