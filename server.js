@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 // Importar Lista de Array
 import dados from "./src/data/dados.js";
-const { bruxos } = dados;
+const { bruxos,varinhas,pocoes } = dados;
 
 // Criar aplicação com Express e configurar para aceitar JSON
 const app = express();
@@ -43,17 +43,35 @@ app.get("/bruxos", (req, res) => {
         data: resultado,
     });
 });
- app.get("/varinha", (req,res) => {
-    const { material, nucleo } = req.query 
-    let varinhaFiltrada = varinha; 
+let material = ["Azevinho","Videira","Salgueiro","Carvalho Inglês"];
+let nucleo = ["Pena de Fênix","Fibra de Coração de Dragão","Pelo de Unicórnio","Pelo de Testrálio"];
+ app.get("/varinhas", (req,res) => {
+    const { material, nucleo } = req.query;
+    let varinhasFiltradaMaterial = varinhas; 
+    let varinhasFiltradaNucleo = varinhas; 
+
     if(material) {
-        varinhaFiltrada = varinha.filter ((v) => v.varinha.toLowerCase().includes(varinha.toLowerCase()));
- } 
+        varinhasFiltradaMaterial = varinhasFiltradaMaterial.filter ((v) => v.material.toLowerCase().includes(material.toLowerCase()));
+ } if (nucleo) {
+     varinhasFiltradaNucleo = varinhasFiltradaNucleo.filter ((v) => v.nucleo.toLowerCase().includes(nucleo.toLowerCase()));
+ }
  res.status(200).json({
-    total:varinhaFiltrada.length,
-    data:varinhaFiltrada
+     total:varinhasFiltradaMaterial.length &&varinhasFiltradaNucleo.length,
+    data:varinhasFiltradaMaterial && varinhasFiltradaNucleo
  })
  })
+
+ app.get ("/pocoes", (req,res) => {
+    const {nome} = req.query;
+    let pocaoNome = pocoes; 
+    if (pocoes) {
+        pocoes = nome.filter((p) => p.nome.toLowerCase().includes(nome.toLowerCase()));
+}
+    res.status(200).json({
+        total: pocaoNome.length,
+        data: pocaoNome,
+});
+ }); 
 
 // Rota para criar Bruxo
 
